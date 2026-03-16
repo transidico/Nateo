@@ -3,7 +3,7 @@ import Navbar from './components/Navbar'
 import HomeImage from './components/HomeImage'
 import Carousel from './components/Carousel'
 import Footer from './components/Footer'
-import Titolo, { Paragrafo } from './components/Text'
+import Titolo from './components/Text'
 
 
 const cards = [
@@ -41,17 +41,17 @@ const cards = [
 
 function App() {
   return (
-    <>
+    <div className="bg-mytheme-bg min-h-screen transition-colors duration-300">
       <Navbar />
       <HomeImage
         titolo="Nateo Travel"
         sottotitolo="Nati per viaggiare"
         immagine="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
       />
-      <Titolo testo="Scopri le destinazioni più amate" size="text-4xl" className="font-sans font-bold text-center my-0 pt-10" />
+      <Titolo testo="Scopri le destinazioni più amate" size="text-4xl" className="font-bold text-mytheme-primary text-center my-0 pt-10" />
       <Carousel cards={cards} />
       <Footer />
-    </>
+    </div>
   )
 }
 

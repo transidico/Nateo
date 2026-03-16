@@ -1,2 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 @import "tailwindcss";
-r
+
+/* TEMA CHIARO (Default) */
+:root {
+    --nateo-primary: #011135;
+    --nateo-secondary: #002fff;
+    --nateo-bg: #FFFFFF;
+    --nateo-text: #838385;
+    --nateo-dark: #000000;
+    --nateo-light: #ffffff;
+}
+
+/* TEMA SCURO */
+.dark {
+    --nateo-primary: #ccf2ff;
+    --nateo-secondary: #00c6fd;
+    --nateo-bg: #0f172a;
+    --nateo-title: #ffffff;
+    --nateo-text: #f8fafc;
+    --nateo-link: #38bdf8;
+    --nateo-dark: #000000;
+    --nateo-light: #ffffff;
+}
+
+/* Tema principale di nateo */
+@theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --color-mytheme-primary: var(--nateo-primary);
+    --color-mytheme-secondary: var(--nateo-secondary);
+    --color-mytheme-bg: var(--nateo-bg);
+    --color-mytheme-text: var(--nateo-text);
+    --color-mytheme-light: var(--nateo-light);
+    --color-mytheme-dark: var(--nateo-dark);
+}
+
+@layer base {
+    body {
+        font-family: var(--font-sans);
+    }
+}

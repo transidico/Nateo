@@ -12,6 +12,7 @@ function App() {
         <Navbar /> {/* Sempre visibile */}
         <main className="flex-grow">
           <Routes>
+            <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
             <Route path="/about" element={<AboutUs />} />
           </Routes>

@@ -1,3 +1,4 @@
+import RoundButton from "./Button"
 /*Componente immagine profilo
 Gli passo Il titolo, il sottotitolo e il link immagine*/
 function HomeImage({ titolo, sottotitolo, immagine }) {
@@ -18,6 +19,7 @@ function HomeImage({ titolo, sottotitolo, immagine }) {
         <p className="text-lg md:text-4xl font-light shadow-mytheme-text">
           {sottotitolo}
         </p>
+        <RoundButton testo="Scopri di più" to="/about" />
       </div>
     </div>
   )

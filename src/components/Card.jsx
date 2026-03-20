@@ -1,7 +1,7 @@
 /*Componente Card*/
 function Card({ immagine, titolo, descrizione }) {
   return (
-    <div className="card bg-mytheme-bg 0 w-86 h-[400px] shadow-xl shadow-mytheme-text/20 rounded-2xl hover:shadow-2xl transition-all duration-300 flex flex-col overflow-hidden">
+    <div className="card bg-mytheme-bg w-full md:w-86 h-[400px] shadow-xl shadow-mytheme-text/20 rounded-2xl hover:shadow-2xl transition-all duration-300 flex flex-col overflow-hidden">
       {/* Immagine della card*/}
       <figure className="h-72 w-full overflow-hidden">
         <img src={immagine} alt={titolo} className="w-full h-full object-cover" />

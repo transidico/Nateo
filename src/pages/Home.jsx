@@ -1,7 +1,12 @@
+//Importazione per login
+import { useAuth } from '../context/auth';
+import { auth } from '../firebase';
+import { signOut } from 'firebase/auth';
+//Importazione dei componenti
 import HomeImage from '../components/HomeImage'
 import Carousel from '../components/Carousel'
 import Titolo from '../components/Text'
-
+import { EditButton, LogoutButton, AddButton } from '../components/Button';
 
 const cards = [
     {
@@ -36,18 +41,32 @@ const cards = [
     }
 ];
 
+
+
 function Home() {
+    const { isAdmin } = useAuth();
+
     return (
-        <> {/* Uso i Fragment <> perché Navbar e Footer sono già in App.jsx */}
+        <>
             <HomeImage
                 titolo="Nateo Travel"
                 sottotitolo="Nati per viaggiare"
                 immagine="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             />
             <Titolo testo="Scopri le destinazioni più amate" />
+
+            {/* Pulsanti visibili solo all'admin */}
+            {isAdmin && (
+                <div className="flex justify-end items-center gap-2 px-10 mt-4">
+                    <AddButton onClick={() => console.log('aggiungi')} size="w-8 h-8" />
+                    <EditButton onClick={() => console.log('modifica')} size="w-8 h-8" />
+                    <LogoutButton onClick={() => signOut(auth)} size="w-8 h-8" />
+                </div>
+            )}
+
             <Carousel cards={cards} />
         </>
     )
 }
 
-export default Home
+export default Home;

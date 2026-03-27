@@ -22,6 +22,7 @@ function Navbar() {
           <a href="#" className="text-mytheme-text hover:text-mytheme-secondary">Destinations</a>
           <a href="#" className="text-mytheme-text hover:text-mytheme-secondary">Tips</a>
           <Link to="/about" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">About</Link>
+          <Link to="/login" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">Login</Link>
           <button onClick={toggleTheme} className="text-2xl cursor-pointer text-mytheme-text">{isDark ? <IoSunny /> : <IoMoonSharp />}</button>
         </div>
 
@@ -38,6 +39,7 @@ function Navbar() {
           <a href="#" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary">Destinations</a>
           <a href="#" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary">Tips</a>
           <Link to="/about" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">About</Link>
+          <Link to="/login" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">Login</Link>
         </div>
       )}
     </nav>

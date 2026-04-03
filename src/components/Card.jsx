@@ -1,8 +1,9 @@
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/auth';
 import { DeleteButton } from './Button';
 
 /*Componente Card*/
-function Card({ immagine, titolo, descrizione }) {
+function Card({ id, immagine, titolo, descrizione, deleteCard }) {
   const { isAdmin } = useAuth(); // Prende isAdmin dal context
 
   return (
@@ -10,7 +11,7 @@ function Card({ immagine, titolo, descrizione }) {
       {/* Bottone elimina visibile solo all'admin */}
       {isAdmin && (
         <div className="absolute top-2 right-2 z-10">
-          <DeleteButton onClick={() => console.log('elimina')} size="w-8 h-8" />
+          <DeleteButton onClick={deleteCard} size="w-8 h-8" />
         </div>
       )}
       {/* Immagine della card*/}
@@ -19,7 +20,9 @@ function Card({ immagine, titolo, descrizione }) {
       </figure>
       {/* Parte descrittiva */}
       <div className="card-body p-6 flex flex-col flex-grow">
-        <h2 className="card-title text-2xl font-bold text-mytheme-primary tracking-wide mb-2 line-clamp-1">{titolo}</h2>
+        <h2 className="card-title text-2xl font-bold text-mytheme-primary tracking-wide mb-2 line-clamp-1">
+          <Link to={`/trip/${id}`} className="hover:text-mytheme-secondary transition-colors duration-200">{titolo}</Link>
+        </h2>
         <p className="text-mytheme-text line-clamp-3 overflow-hidden">{descrizione}</p>
         <div className="flex-grow"></div>
       </div>

@@ -53,7 +53,7 @@ function Destinations() {
 
             {isAdmin && (
                 <div className="flex justify-end items-center gap-2 px-10 mt-4">
-                    <AddButton onClick={() => setShowModal(true)} size="w-8 h-8" />
+                    <AddButton onClick={() => setShowModal(true)} size="w-10 h-10" />
                 </div>
             )}
 

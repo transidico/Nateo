@@ -7,6 +7,7 @@ import Destinations from './pages/Destinations';
 import AboutUs from './pages/AboutUs';
 import Login from './pages/Login';
 import { Authentication } from './context/auth';
+import DestinationSection from './pages/DestinationSection';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
               <Route path="/home" element={<Home />} />
               <Route path="/destinations" element={<Destinations />} />
               <Route path="/about" element={<AboutUs />} />
+              <Route path="/trip/:id" element={<DestinationSection />} />
               <Route path="/login" element={<Login />} />
             </Routes>
           </main>

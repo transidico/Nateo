@@ -38,18 +38,19 @@ export function CardGlobe({ id, immagine, titolo, deleteCard }) {
   const { isAdmin } = useAuth();
 
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden shadow-xl shadow-mytheme-text/20 hover:shadow-2xl transition-all duration-300 aspect-video">
+    //Apre la pagina della destinazione cliccando sulla card (la card si ingrandisce del 101% al passaggio del mouse)
+    <Link to={`/trip/${id}`} className="relative w-full rounded-2xl overflow-hidden shadow-xl shadow-mytheme-text/20 hover:shadow-2xl transition-all duration-300 aspect-video block hover:scale-101">
       {isAdmin && (
         <div className="absolute top-2 right-2 z-10">
-          <DeleteButton onClick={deleteCard} size="w-8 h-8" />
+          <DeleteButton onClick={(e) => { e.preventDefault(); deleteCard(); }} size="w-8 h-8" />
         </div>
       )}
       <img src={immagine} alt={titolo} className="w-full h-full object-cover" />
       <div className="absolute bottom-0 left-0 p-4">
-        <Link to={`/trip/${id}`} className="text-4xl font-black text-white uppercase tracking-wide drop-shadow-lg hover:text-mytheme-secondary transition-colors duration-200">
+        <span className="text-4xl font-black text-white uppercase tracking-wide drop-shadow-lg">
           {titolo}
-        </Link>
+        </span>
       </div>
-    </div>
+    </Link>
   );
 }

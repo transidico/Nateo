@@ -7,7 +7,8 @@ function Card({ id, immagine, titolo, descrizione, deleteCard }) {
   const { isAdmin } = useAuth(); // Prende isAdmin dal context
 
   return (
-    <div className="relative card bg-mytheme-bg w-full md:w-86 h-[400px] shadow-xl shadow-mytheme-text/20 rounded-2xl hover:shadow-2xl transition-all duration-300 flex flex-col overflow-hidden">
+    //la card si ingrandisce del 101% al passaggio del mouse
+    <div className="relative card bg-mytheme-bg w-full md:w-86 h-[400px] shadow-xl shadow-mytheme-text/20 rounded-2xl hover:shadow-2xl transition-all duration-300 flex flex-col overflow-hidden hover:scale-101">
       {/* Bottone elimina visibile solo all'admin */}
       {isAdmin && (
         <div className="absolute top-2 right-2 z-10">
@@ -39,7 +40,7 @@ export function CardGlobe({ id, immagine, titolo, deleteCard }) {
 
   return (
     //Apre la pagina della destinazione cliccando sulla card (la card si ingrandisce del 101% al passaggio del mouse)
-    <Link to={`/trip/${id}`} className="relative w-full rounded-2xl overflow-hidden shadow-xl shadow-mytheme-text/20 hover:shadow-2xl transition-all duration-300 aspect-video block hover:scale-101">
+    <Link to={`/destinations/${id}`} className="relative w-full rounded-2xl overflow-hidden shadow-xl shadow-mytheme-text/20 hover:shadow-2xl transition-all duration-300 aspect-video block hover:scale-101">
       {isAdmin && (
         <div className="absolute top-2 right-2 z-10">
           <DeleteButton onClick={(e) => { e.preventDefault(); deleteCard(); }} size="w-8 h-8" />

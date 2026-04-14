@@ -1,4 +1,4 @@
-// SChermata per aggiungere una nuova card
+// Schermata per aggiungere una nuova card
 import { useState } from 'react';
 
 function AddCardModal({ onClose, onAdd }) {
@@ -27,7 +27,7 @@ function AddCardModal({ onClose, onAdd }) {
 export default AddCardModal;
 
 
-// SChermata per aggiungere una nuova card senza descrizione, usata per le dividere le destinazioni con cardglobe
+// Schermata per aggiungere una nuova card senza descrizione, usata per le dividere le destinazioni con cardglobe
 export function AddGlobeModal({ onClose, onAdd }) {
     const [form, setForm] = useState({ titolo: '', immagine: '' });
     const update = (e) => setForm({ ...form, [e.target.id]: e.target.value });

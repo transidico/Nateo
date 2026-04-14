@@ -1,18 +1,19 @@
 import { useAuth } from '../context/auth';
 import { db } from '../firebase';
-import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, setDoc, deleteDoc, doc } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import Titolo from '../components/Text';
 import { CardGlobe } from '../components/Card';
 import { AddButton } from '../components/Button';
 import AddCardModal, { AddGlobeModal } from '../components/AddCardModal';
 
+
 function Destinations() {
     const { isAdmin } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [destinations, setDestinations] = useState([]);
 
-    const destinationsCollectionRef = collection(db, "destinazioni_globo");
+    const destinationsCollectionRef = collection(db, "destinations");
 
     // Carica le destinazioni da Firebase all'avvio della pagina
     useEffect(() => {
@@ -30,8 +31,10 @@ function Destinations() {
     // Salva la nuova destinazione su Firebase e aggiorna lo stato locale
     const addDestination = async (nuovaDestination) => {
         try {
-            const docInserito = await addDoc(destinationsCollectionRef, nuovaDestination);
-            setDestinations([{ id: docInserito.id, ...nuovaDestination }, ...destinations]);
+            const id = nuovaDestination.titolo.toLowerCase();
+            const docRef = doc(db, "destinations", id);
+            await setDoc(docRef, nuovaDestination);
+            setDestinations([{ id, ...nuovaDestination }, ...destinations]);
         } catch (error) {
             console.error("Errore durante il salvataggio:", error);
         }
@@ -40,7 +43,7 @@ function Destinations() {
     // Elimina la destinazione da Firebase e rimuovila dallo stato locale
     const deleteDestination = async (id) => {
         try {
-            await deleteDoc(doc(db, "destinazioni_globo", id));
+            await deleteDoc(doc(db, "destinations", id));
             setDestinations(destinations.filter((d) => d.id !== id));
         } catch (error) {
             console.error("Errore durante l'eliminazione:", error);

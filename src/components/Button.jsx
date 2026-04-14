@@ -20,7 +20,7 @@ export default function RoundButton({ testo, to, onClick, color = "bg-mytheme-se
 // Bottone circolare con icona edit
 export function EditButton({ onClick, size = "w-10 h-10" }) {
     return (
-        <button onClick={onClick} className={`${size} rounded-full bg-mytheme-secondary/70 border-2 border-mytheme-primary/20 flex items-center justify-center text-mytheme-light hover:bg-mytheme-primary hover:shadow-[0_0_15px_5px_rgba(168,85,247,0.5)] transition-all duration-500`}>
+        <button onClick={onClick} className={`${size} rounded-full bg-mytheme-secondary/70 border-2 border-mytheme-primary/20 flex items-center justify-center text-mytheme-light hover:bg-mytheme-primary hover:shadow-[0_0_15px_5px_rgba(59,130,246,0.5)] transition-all duration-500`}>
             <IoPencil className="text-sm" />
         </button>
     )
@@ -47,7 +47,7 @@ export function DeleteButton({ onClick, size = "w-10 h-10" }) {
 // Bottone circolare con icona Add
 export function AddButton({ onClick, size = "w-10 h-10" }) {
     return (
-        <button onClick={onClick} className={`${size} rounded-full bg-mytheme-secondary/70 border-2 border-mytheme-primary/20 flex items-center justify-center text-mytheme-light hover:bg-mytheme-primary hover:shadow-[0_0_15px_5px_rgba(168,85,247,0.5)] transition-all duration-500`}>
+        <button onClick={onClick} className={`${size} rounded-full bg-mytheme-secondary/70 border-2 border-mytheme-primary/20 flex items-center justify-center text-mytheme-light hover:bg-mytheme-primary hover:shadow-[0_0_15px_5px_rgba(59,130,246,0.5)] transition-all duration-500`}>
             <IoAdd className="text-sm" />
         </button>
     )

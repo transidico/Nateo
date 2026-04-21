@@ -5,7 +5,7 @@ import { collection, doc, setDoc, deleteDoc, onSnapshot } from 'firebase/firesto
 import { db } from '../firebase';
 import { useAuth } from '../context/auth';
 import { AddButton } from '../components/Button';
-import AddCardModal from '../components/AddCardModal';
+import AddCardModal from '../components/Modal';
 import Card from '../components/Card';
 
 function DestinationSection() {
@@ -53,7 +53,7 @@ function DestinationSection() {
                     <p className="text-mytheme-text">Non è stata ancora aggiunta alcuna destinazione in {continente}.</p>
                 ) : (
                     destinations.map((card) => (
-                        <Card key={card.id} id={card.id} immagine={card.immagine} titolo={card.titolo} descrizione={card.descrizione} deleteCard={() => deleteDestination(card.id)} />
+                        <Card key={card.id} id={card.id} immagine={card.immagine} titolo={card.titolo} descrizione={card.descrizione} deleteCard={() => deleteDestination(card.id)} continente={continente} />
                     ))
                 )}
             </div>

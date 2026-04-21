@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import HomeImage from '../components/HomeImage'
 import Carousel from '../components/Carousel'
 import Titolo from '../components/Text'
-import AddCardModal from '../components/AddCardModal';
+import AddCardModal from '../components/Modal';
 import { EditButton, LogoutButton, AddButton } from '../components/Button';
 
 //Pagina home

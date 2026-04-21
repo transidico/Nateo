@@ -3,12 +3,12 @@ import { useAuth } from '../context/auth';
 import { DeleteButton } from './Button';
 
 /*Componente Card*/
-function Card({ id, immagine, titolo, descrizione, deleteCard }) {
+function Card({ id, immagine, titolo, descrizione, deleteCard, continente }) {
   const { isAdmin } = useAuth(); // Prende isAdmin dal context
 
   return (
-    //la card si ingrandisce del 101% al passaggio del mouse
-    <div className="relative card bg-mytheme-bg w-full md:w-86 h-[400px] shadow-xl shadow-mytheme-text/20 rounded-2xl hover:shadow-2xl transition-all duration-300 flex flex-col overflow-hidden hover:scale-101">
+    // Tutta la card è cliccabile e si ingrandisce del 101% al passaggio del mouse
+    <Link to={`/destinations/${continente}/trip/${id}`} className="relative card bg-mytheme-bg w-full md:w-86 h-[400px] shadow-xl shadow-mytheme-text/20 rounded-2xl hover:shadow-2xl transition-all duration-300 flex flex-col overflow-hidden hover:scale-101 block">
       {/* Bottone elimina visibile solo all'admin */}
       {isAdmin && (
         <div className="absolute top-2 right-2 z-10">
@@ -27,7 +27,7 @@ function Card({ id, immagine, titolo, descrizione, deleteCard }) {
         <p className="text-mytheme-text line-clamp-3 overflow-hidden">{descrizione}</p>
         <div className="flex-grow"></div>
       </div>
-    </div>
+    </Link>
   );
 }
 

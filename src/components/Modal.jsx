@@ -49,3 +49,71 @@ export function AddGlobeModal({ onClose, onAdd }) {
         </div>
     );
 }
+
+// Lista dei blocchi disponibili per costruire l'articolo del viaggio
+const BLOCCHI = [
+    { tipo: 'titolo1', label: 'Titolo 1', icona: 'H1', descrizione: 'Titolo principale' },
+    { tipo: 'titolo2', label: 'Titolo 2', icona: 'H2', descrizione: 'Titolo secondario' },
+    { tipo: 'titolo3', label: 'Titolo 3', icona: 'H3', descrizione: 'Titolo terziario' },
+    { tipo: 'paragrafo', label: 'Paragrafo', icona: '¶', descrizione: 'Blocco di testo' },
+    { tipo: 'immagine', label: 'Immagine', icona: '🖼', descrizione: 'URL immagine' },
+    { tipo: 'mappa', label: 'Mappa', icona: '📍', descrizione: 'Mappa interattiva' },
+    { tipo: 'riquadro', label: 'Riquadro', icona: '▣', descrizione: 'Box di testo in evidenza' },
+    { tipo: 'link', label: 'Link', icona: '🔗', descrizione: 'Collegamento a una risorsa esterna' },
+];
+
+// Modal per scegliere il tipo di blocco da aggiungere all'articolo.
+// onClose: chiude il modal | onSelect: passa il tipo scelto al padre
+export function ModalTrip({ onClose, onSelect }) {
+    const [selezionato, setSelezionato] = useState(null);
+
+    // Conferma la selezione e notifica il padre solo se un blocco è stato scelto
+    const handleConferma = () => {
+        if (!selezionato) return;
+        onSelect(selezionato);
+        onClose();
+    };
+
+    return (
+        <div className="fixed inset-0 bg-mytheme-text/50 flex items-center justify-center z-50">
+            <div className="bg-mytheme-bg rounded-2xl p-8 w-[500px] flex flex-col gap-6 shadow-xl">
+
+                <h2 className="text-xl font-bold text-mytheme-primary">Aggiungi un blocco</h2>
+
+                {/* Griglia dei blocchi — si evidenzia quello selezionato */}
+                <div className="grid grid-cols-3 gap-3">
+                    {BLOCCHI.map((blocco) => (
+                        <button
+                            key={blocco.tipo}
+                            onClick={() => setSelezionato(blocco.tipo)}
+                            className={`flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer
+                                ${selezionato === blocco.tipo
+                                    ? 'border-mytheme-primary bg-mytheme-primary/10'  // selezionato appare ben visisbile
+                                    : 'border-mytheme-text/20 hover:border-mytheme-primary/50'}`}  // non selezionato appare sbiadito/grigio
+                        >
+                            <span className="text-2xl text-mytheme-primary">{blocco.icona}</span>
+                            <span className="text-sm font-bold text-mytheme-text">{blocco.label}</span>
+                            <span className="text-xs text-mytheme-text/60 text-center">{blocco.descrizione}</span>
+                        </button>
+                    ))}
+                </div>
+
+                {/* Annulla torna indietro, Avanti è disabilitato finché non si sceglie un blocco */}
+                <div className="flex gap-2 justify-end">
+                    <button
+                        onClick={onClose}
+                        className="px-4 py-2 rounded-full border border-mytheme-primary text-mytheme-text hover:bg-mytheme-primary hover:text-white transition-all duration-300">
+                        Annulla
+                    </button>
+                    <button
+                        onClick={handleConferma}
+                        disabled={!selezionato}
+                        className="px-4 py-2 rounded-full bg-mytheme-primary text-white hover:bg-mytheme-secondary transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed">
+                        Avanti
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    );
+}

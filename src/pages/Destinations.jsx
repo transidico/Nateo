@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import Titolo from '../components/Text';
 import { CardGlobe } from '../components/Card';
 import { AddButton } from '../components/Button';
-import AddCardModal, { AddGlobeModal } from '../components/AddCardModal';
+import AddCardModal, { AddGlobeModal } from '../components/Modal';
 
 
 function Destinations() {

@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { storage } from '../firebase';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 // ─── AddCardModal ─────────────────────────────────────────────────────────────
 function AddCardModal({ onClose, onAdd }) {
@@ -72,7 +74,7 @@ const BLOCCHI = [
     { tipo: 'titolo2', label: 'Titolo 2', icona: 'H2', descrizione: 'Titolo secondario' },
     { tipo: 'titolo3', label: 'Titolo 3', icona: 'H3', descrizione: 'Titolo terziario' },
     { tipo: 'paragrafo', label: 'Paragrafo', icona: '¶', descrizione: 'Blocco di testo' },
-    { tipo: 'immagine', label: 'Immagine', icona: '🖼', descrizione: 'URL immagine' },
+    { tipo: 'immagine', label: 'Immagine', icona: '🖼', descrizione: 'Foto con posizione' },
     { tipo: 'mappa', label: 'Mappa', icona: '📍', descrizione: 'Mappa interattiva' },
     { tipo: 'riquadro', label: 'Riquadro', icona: '▣', descrizione: 'Box di testo in evidenza' },
     { tipo: 'link', label: 'Link', icona: '🔗', descrizione: 'Collegamento a risorsa esterna' },
@@ -83,8 +85,7 @@ const CAMPI = {
     titolo2: [{ id: 'testo', label: 'Testo del titolo', tipo: 'input' }],
     titolo3: [{ id: 'testo', label: 'Testo del titolo', tipo: 'input' }],
     paragrafo: [{ id: 'testo', label: 'Testo del paragrafo', tipo: 'textarea' }],
-    immagine: [{ id: 'url', label: 'URL immagine', tipo: 'input' },
-    { id: 'didascalia', label: 'Didascalia (opzionale)', tipo: 'input' }],
+    immagine: [],
     mappa: [{ id: 'citta', label: 'Nome città', tipo: 'input' }],
     riquadro: [{ id: 'testo', label: 'Testo del riquadro', tipo: 'textarea' }],
     link: [{ id: 'etichetta', label: 'Testo del link', tipo: 'input' },
@@ -97,12 +98,19 @@ export function ModalTrip({ onClose, onAdd }) {
     const [step, setStep] = useState(1);
     const [selezionato, setSelezionato] = useState(null);
     const [form, setForm] = useState({});
+    const [tabImmagine, setTabImmagine] = useState('url');
+    const [fileSelezionato, setFileSelezionato] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const fileInputRef = useRef(null);
 
     const update = (e) => setForm({ ...form, [e.target.id]: e.target.value });
 
     const handleAvanti = () => {
         if (!selezionato) return;
         setForm({});
+        setTabImmagine('url');
+        setFileSelezionato(null);
         setStep(2);
     };
 
@@ -110,10 +118,42 @@ export function ModalTrip({ onClose, onAdd }) {
         setStep(1);
         setSelezionato(null);
         setForm({});
+        setFileSelezionato(null);
     };
 
-    const handleAggiungi = () => {
-        const campiObbligatori = CAMPI[selezionato].filter(c => c.id !== 'didascalia');
+    const handleAggiungi = async () => {
+        if (selezionato === 'immagine') {
+            let urlFinale = form.url || '';
+
+            if (tabImmagine === 'upload' && fileSelezionato) {
+                setUploading(true);
+                const formData = new FormData();
+                formData.append('file', fileSelezionato);
+                formData.append('upload_preset', 'Nateo_upload');
+
+                const res = await fetch(`https://api.cloudinary.com/v1_1/dgdagj2bm/image/upload`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await res.json();
+                urlFinale = data.secure_url;
+                setUploading(false);
+            }
+
+            if (!urlFinale) return;
+            onAdd({
+                tipo: 'immagine',
+                url: urlFinale,
+                posizione: form.posizione || 'centro',
+                dimensione: form.dimensione || 'media',
+                didascalia: form.didascalia || '',
+                testo: form.testo || '',
+            });
+            onClose();
+            return;
+        }
+
+        const campiObbligatori = CAMPI[selezionato].filter(c => c.id !== 'didascalia' && c.tipo !== 'select');
         const tuttiCompilati = campiObbligatori.every(c => form[c.id]?.trim());
         if (!tuttiCompilati) return;
         onAdd({ tipo: selezionato, ...form });
@@ -130,7 +170,7 @@ export function ModalTrip({ onClose, onAdd }) {
                         : `Configura: ${BLOCCHI.find(b => b.tipo === selezionato)?.label}`}
                 </h2>
 
-                {/* Step 1 — griglia 2 colonne su mobile, 3 su sm+ */}
+                {/* Step 1 */}
                 {step === 1 && (
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         {BLOCCHI.map((blocco) => (
@@ -150,8 +190,67 @@ export function ModalTrip({ onClose, onAdd }) {
                     </div>
                 )}
 
-                {/* Step 2 — campi compilazione */}
-                {step === 2 && (
+                {/* Step 2 — immagine */}
+                {step === 2 && selezionato === 'immagine' && (
+                    <div className="flex flex-col gap-4">
+                        <div className="flex rounded-lg overflow-hidden border border-mytheme-primary">
+                            <button onClick={() => setTabImmagine('url')}
+                                className={`flex-1 py-2 text-sm transition-all duration-200 ${tabImmagine === 'url' ? 'bg-mytheme-primary text-white' : 'text-mytheme-text'}`}>
+                                URL
+                            </button>
+                            <button onClick={() => setTabImmagine('upload')}
+                                className={`flex-1 py-2 text-sm transition-all duration-200 ${tabImmagine === 'upload' ? 'bg-mytheme-primary text-white' : 'text-mytheme-text'}`}>
+                                Carica file
+                            </button>
+                        </div>
+
+                        {tabImmagine === 'url' && (
+                            <input id="url" type="text" placeholder="URL immagine" value={form.url || ''} onChange={update}
+                                className="px-4 py-3 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text" />
+                        )}
+
+                        {tabImmagine === 'upload' && (
+                            <div onClick={() => fileInputRef.current.click()}
+                                className="border-2 border-dashed border-mytheme-primary rounded-lg p-6 flex flex-col items-center gap-2 cursor-pointer hover:bg-mytheme-primary/5 transition-all duration-200">
+                                <span className="text-2xl">📁</span>
+                                <span className="text-sm text-mytheme-text">
+                                    {fileSelezionato ? fileSelezionato.name : 'Clicca per selezionare un file'}
+                                </span>
+                                <input ref={fileInputRef} type="file" accept="image/*" className="hidden"
+                                    onChange={(e) => setFileSelezionato(e.target.files[0])} />
+                            </div>
+                        )}
+
+                        {uploading && (
+                            <div className="w-full bg-mytheme-text/10 rounded-full h-2">
+                                <div className="bg-mytheme-primary h-2 rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                            </div>
+                        )}
+
+                        <select id="posizione" value={form.posizione || 'centro'} onChange={update}
+                            className="px-4 py-3 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text">
+                            <option value="sinistra">Sinistra</option>
+                            <option value="centro">Centro</option>
+                            <option value="destra">Destra</option>
+                        </select>
+
+                        <select id="dimensione" value={form.dimensione || 'media'} onChange={update}
+                            className="px-4 py-3 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text">
+                            <option value="piccola">Piccola</option>
+                            <option value="media">Media</option>
+                            <option value="grande">Grande</option>
+                        </select>
+
+                        <input id="didascalia" type="text" placeholder="Didascalia (opzionale)" value={form.didascalia || ''} onChange={update}
+                            className="px-4 py-3 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text" />
+
+                        <textarea id="testo" placeholder="Paragrafo affiancato (opzionale)" value={form.testo || ''} onChange={update}
+                            className="px-4 py-3 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text h-24" />
+                    </div>
+                )}
+
+                {/* Step 2 — altri blocchi */}
+                {step === 2 && selezionato !== 'immagine' && (
                     <div className="flex flex-col gap-4">
                         {CAMPI[selezionato].map((campo) => (
                             campo.tipo === 'textarea'
@@ -178,13 +277,13 @@ export function ModalTrip({ onClose, onAdd }) {
                         </button>
                     </>}
                     {step === 2 && <>
-                        <button onClick={handleIndietro}
-                            className="px-4 py-3 rounded-full border border-mytheme-primary text-mytheme-text hover:bg-mytheme-primary hover:text-white transition-all duration-300 text-sm">
+                        <button onClick={handleIndietro} disabled={uploading}
+                            className="px-4 py-3 rounded-full border border-mytheme-primary text-mytheme-text hover:bg-mytheme-primary hover:text-white transition-all duration-300 text-sm disabled:opacity-40">
                             Indietro
                         </button>
-                        <button onClick={handleAggiungi}
-                            className="px-4 py-3 rounded-full bg-mytheme-primary text-white hover:bg-mytheme-secondary transition-all duration-300 text-sm">
-                            Aggiungi
+                        <button onClick={handleAggiungi} disabled={uploading}
+                            className="px-4 py-3 rounded-full bg-mytheme-primary text-white hover:bg-mytheme-secondary transition-all duration-300 disabled:opacity-40 text-sm">
+                            {uploading ? `${uploadProgress}%` : 'Aggiungi'}
                         </button>
                     </>}
                 </div>

@@ -36,7 +36,6 @@ function Navbar() {
       {menuOpen && (
         <div className="md:hidden absolute w-full px-6 pb-4 flex flex-col space-y-3 bg-mytheme-bg shadow-lg shadow-mytheme-text/20 z-50">
           <Link to="/Home" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">Home</Link>
-          <Link to="/about" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">About</Link>
           <Link to="/destinations" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">Destinations</Link>
           <a href="#" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary">Tips</a>
           <Link to="/about" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">About</Link>

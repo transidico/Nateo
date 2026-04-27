@@ -1,17 +1,3 @@
-// Componente box di login per accedere con email e password
-// function LoginBox() {
-//     return (
-//         <div className="min-h-screen flex items-center justify-center">
-//             <div className="flex flex-col gap-8 p-8 rounded-2xl shadow-lg bg-mytheme-light dark:bg-mytheme-bg border-1 border-mytheme-primary w-80">
-//                 <h1 className="text-2xl font-bold text-mytheme-primary text-center">Login</h1>
-//                 <input type="email" placeholder="Email" className="px-4 py-2 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text" />
-//                 <input type="password" placeholder="Password" className="px-4 py-2 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text" />
-//                 <button className="py-2 rounded-full bg-mytheme-primary text-mytheme-text font-medium hover:bg-mytheme-secondary transition-all duration-300">Login</button>
-//             </div>
-//         </div>
-//     )
-// }
-
 import { useState } from 'react';
 import { auth } from '../firebase';                         // Istanza di Firebase Auth
 import { signInWithEmailAndPassword } from 'firebase/auth'; // Funzione di login Firebase
@@ -28,11 +14,15 @@ function LoginBox() {
 
     // Funzione di login: tenta l'accesso con email e password su Firebase
     const handleLogin = async () => {
+        if (email.length > 20 || password.length > 18) {
+            setErrore('Email o password non validi!');
+            return;
+        }
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            navigate('/');                                      // Se il login va a buon fine, reindirizza alla home
+            navigate('/');
         } catch (err) {
-            setErrore('Email o password errati!');              // Mostra errore se il login fallisce
+            setErrore('Email o password errati!');
         }
     };
 
@@ -42,12 +32,12 @@ function LoginBox() {
                 <h1 className="text-2xl font-bold text-mytheme-primary text-center">Login</h1>
 
                 {/* Campo email */}
-                <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} className="px-4 py-2 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text" />
+                <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} maxLength={20} className="px-4 py-2 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text text-base" />
 
                 {/* Campo password con bottone mostra/nascondi */}
                 <div className="relative">
-                    <input type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} className="w-full px-4 py-2 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text" />
-                    <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-mytheme-text">
+                    <input type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} maxLength={18} className="w-full px-4 py-2 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text text-base" />
+                    <button onClick={() => setShowPassword(!showPassword)} maxLength={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-mytheme-text">
                         {showPassword ? <IoEyeOff /> : <IoEye />}
                     </button>
                 </div>

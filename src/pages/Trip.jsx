@@ -83,13 +83,48 @@ function BloccoRenderer({ blocco }) {
         case 'paragrafo':
             return <p className="text-mytheme-text leading-relaxed">{blocco.testo}</p>;
         //=IMMAGINE===========================================================================
-        case 'immagine':
+        case 'immagine': {
+            const posizione = blocco.posizione || 'centro';
+            const dimensione = blocco.dimensione || 'media';
+
+            const larghezzaImg = dimensione === 'piccola' ? 'sm:w-1/4' : dimensione === 'grande' ? 'sm:w-2/3' : 'sm:w-1/2';
+            const allineamento = posizione === 'sinistra' ? 'items-start' : posizione === 'destra' ? 'items-end' : 'items-center';
+
+            if (blocco.testo && posizione !== 'centro') {
+                return (
+                    <figure className={`flex gap-4 sm:gap-6 sm:items-start ${posizione === 'destra' ? 'flex-col-reverse sm:flex-row-reverse' : 'flex-col sm:flex-row'}`}>
+                        <div className={`flex flex-col gap-1 shrink-0 w-full ${larghezzaImg}`}>
+                            <img
+                                src={blocco.url}
+                                alt={blocco.didascalia || ''}
+                                className="w-full rounded-2xl object-cover"
+                            />
+                            {blocco.didascalia && (
+                                <figcaption className="text-sm text-mytheme-text/60 text-center">{blocco.didascalia}</figcaption>
+                            )}
+                        </div>
+                        <div className="flex flex-col gap-2 min-w-0 flex-1">
+                            <p className="text-mytheme-text leading-relaxed">{blocco.testo}</p>
+                        </div>
+                    </figure>
+                );
+            }
             return (
-                <figure className="flex flex-col gap-2">
-                    <img src={blocco.url} alt={blocco.didascalia || ''} className="w-1/3 rounded-2xl object-cover" />
-                    {blocco.didascalia && <figcaption className="text-sm text-mytheme-text/60 text-center">{blocco.didascalia}</figcaption>}
+                <figure className={`flex flex-col gap-2 ${allineamento}`}>
+                    <img
+                        src={blocco.url}
+                        alt={blocco.didascalia || ''}
+                        className={`w-full ${larghezzaImg} rounded-2xl object-cover`}
+                    />
+                    {blocco.didascalia && (
+                        <figcaption className="text-sm text-mytheme-text/60 text-center">{blocco.didascalia}</figcaption>
+                    )}
+                    {blocco.testo && (
+                        <p className="text-mytheme-text leading-relaxed w-full">{blocco.testo}</p>
+                    )}
                 </figure>
             );
+        }
         //=MAPPA===========================================================================
         case 'mappa':
             return (

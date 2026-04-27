@@ -21,8 +21,11 @@ function Card({ id, immagine, titolo, descrizione, deleteCard, continente }) {
       </figure>
       {/* Parte descrittiva */}
       <div className="card-body p-6 flex flex-col flex-grow">
-        <h2 className="card-title text-2xl font-bold text-mytheme-primary tracking-wide mb-2 line-clamp-1">
+        {/* <h2 className="card-title text-2xl font-bold text-mytheme-primary tracking-wide mb-2 line-clamp-1">
           <Link to={`/trip/${id}`} className="hover:text-mytheme-secondary transition-colors duration-200">{titolo}</Link>
+        </h2> */}
+        <h2 className="card-title text-2xl font-bold text-mytheme-primary tracking-wide mb-2 line-clamp-1">
+          {titolo}
         </h2>
         <p className="text-mytheme-text line-clamp-3 overflow-hidden">{descrizione}</p>
         <div className="flex-grow"></div>

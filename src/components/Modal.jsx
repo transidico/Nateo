@@ -81,13 +81,29 @@ const BLOCCHI = [
 ];
 
 const CAMPI = {
-    titolo1: [{ id: 'testo', label: 'Testo del titolo', tipo: 'input' }],
-    titolo2: [{ id: 'testo', label: 'Testo del titolo', tipo: 'input' }],
-    titolo3: [{ id: 'testo', label: 'Testo del titolo', tipo: 'input' }],
-    paragrafo: [{ id: 'testo', label: 'Testo del paragrafo', tipo: 'textarea' }],
+    titolo1: [
+        { id: 'testo', label: 'Testo del titolo', tipo: 'input' },
+        { id: 'posizione', label: 'Posizione', tipo: 'select', opzioni: ['sinistra', 'centro', 'destra'] },
+    ],
+    titolo2: [
+        { id: 'testo', label: 'Testo del titolo', tipo: 'input' },
+        { id: 'posizione', label: 'Posizione', tipo: 'select', opzioni: ['sinistra', 'centro', 'destra'] },
+    ],
+    titolo3: [
+        { id: 'testo', label: 'Testo del titolo', tipo: 'input' },
+        { id: 'posizione', label: 'Posizione', tipo: 'select', opzioni: ['sinistra', 'centro', 'destra'] },
+    ],
+    paragrafo: [
+        { id: 'testo', label: 'Testo del paragrafo', tipo: 'textarea' },
+        { id: 'posizione', label: 'Posizione', tipo: 'select', opzioni: ['sinistra', 'centro', 'destra'] },
+    ],
     immagine: [],
-    mappa: [{ id: 'citta', label: 'Nome città', tipo: 'input' }],
-    riquadro: [{ id: 'testo', label: 'Testo del riquadro', tipo: 'textarea' }],
+    // mappa: [{ id: 'citta', label: 'Nome città', tipo: 'input' }],
+    mappa: [{ id: 'query', label: 'Città o URL mappa personalizzata', tipo: 'input' }],
+    riquadro: [
+        { id: 'testo', label: 'Testo del riquadro', tipo: 'textarea' },
+        { id: 'posizione', label: 'Posizione', tipo: 'select', opzioni: ['sinistra', 'centro', 'destra'] },
+    ],
     link: [{ id: 'etichetta', label: 'Testo del link', tipo: 'input' },
     { id: 'url', label: 'URL', tipo: 'input' }],
 };
@@ -257,9 +273,18 @@ export function ModalTrip({ onClose, onAdd }) {
                                 ? <textarea key={campo.id} id={campo.id} placeholder={campo.label}
                                     value={form[campo.id] || ''} onChange={update}
                                     className="px-4 py-3 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text h-32" />
-                                : <input key={campo.id} id={campo.id} type="text" placeholder={campo.label}
-                                    value={form[campo.id] || ''} onChange={update}
-                                    className="px-4 py-3 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text" />
+                                : campo.tipo === 'select'
+                                    ? <select key={campo.id} id={campo.id}
+                                        value={form[campo.id] || campo.opzioni[0]}
+                                        onChange={update}
+                                        className="px-4 py-3 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text">
+                                        {campo.opzioni.map(o => (
+                                            <option key={o} value={o}>{o.charAt(0).toUpperCase() + o.slice(1)}</option>
+                                        ))}
+                                    </select>
+                                    : <input key={campo.id} id={campo.id} type="text" placeholder={campo.label}
+                                        value={form[campo.id] || ''} onChange={update}
+                                        className="px-4 py-3 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text" />
                         ))}
                     </div>
                 )}

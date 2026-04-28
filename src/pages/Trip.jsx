@@ -71,17 +71,22 @@ function Trip() {
 function BloccoRenderer({ blocco }) {
     switch (blocco.tipo) {
         //=TITOLO 1===========================================================================
-        case 'titolo1':
-            return <h1 className="text-4xl font-black text-mytheme-text">{blocco.testo}</h1>;
+        case 'titolo1': {
+            const align = blocco.posizione === 'centro' ? 'text-center' : blocco.posizione === 'destra' ? 'text-right' : 'text-left';
+            return <h1 className={`text-4xl font-black text-mytheme-text ${align}`}>{blocco.testo}</h1>;
+        }
         //=TITOLO 2===========================================================================
         case 'titolo2':
-            return <h2 className="text-3xl font-bold text-mytheme-text">{blocco.testo}</h2>;
+            const align2 = blocco.posizione === 'centro' ? 'text-center' : blocco.posizione === 'destra' ? 'text-right' : 'text-left';
+            return <h2 className={`text-3xl font-bold text-mytheme-text ${align2}`}>{blocco.testo}</h2>;
         //=TITOLO 3===========================================================================
         case 'titolo3':
-            return <h3 className="text-2xl font-semibold text-mytheme-text">{blocco.testo}</h3>;
+            const align3 = blocco.posizione === 'centro' ? 'text-center' : blocco.posizione === 'destra' ? 'text-right' : 'text-left';
+            return <h3 className={`text-2xl font-semibold text-mytheme-text ${align3}`}>{blocco.testo}</h3>;
         //=PARAGRAFO===========================================================================
         case 'paragrafo':
-            return <p className="text-mytheme-text leading-relaxed">{blocco.testo}</p>;
+            const alignParagrafo = blocco.posizione === 'centro' ? 'text-center' : blocco.posizione === 'destra' ? 'text-right' : 'text-left';
+            return <p className={`text-mytheme-text leading-relaxed ${alignParagrafo}`}>{blocco.testo}</p>;
         //=IMMAGINE===========================================================================
         case 'immagine': {
             const posizione = blocco.posizione || 'centro';
@@ -126,23 +131,33 @@ function BloccoRenderer({ blocco }) {
             );
         }
         //=MAPPA===========================================================================
-        case 'mappa':
+        //Inserisci una città oppure un URL di una mappa personalizzata
+        case 'mappa': {
+            const isUrl = blocco.query?.startsWith('http');
+            const src = isUrl
+                ? blocco.query.replace('/edit', '/embed')
+                : `https://maps.google.com/maps?q=${encodeURIComponent(blocco.query)}&output=embed`;
+
             return (
-                <div className="w-full h-64 rounded-2xl overflow-hidden">
+                <div className="w-full h-96 rounded-2xl overflow-hidden">
                     <iframe
-                        title={blocco.citta}
-                        src={`https://maps.google.com/maps?q=${encodeURIComponent(blocco.citta)}&output=embed`}
+                        title="mappa"
+                        src={src}
                         className="w-full h-full border-0"
+                        allowFullScreen
                     />
                 </div>
             );
+        }
         //=TESTO RIQUADRATO===========================================================================
-        case 'riquadro':
+        case 'riquadro': {
+            const align = blocco.posizione === 'centro' ? 'text-center' : blocco.posizione === 'destra' ? 'text-right' : 'text-left';
             return (
                 <div className="bg-mytheme-primary/10 border-l-4 border-mytheme-primary rounded-xl p-6">
-                    <p className="text-mytheme-text">{blocco.testo}</p>
+                    <p className={`text-mytheme-text ${align}`}>{blocco.testo}</p>
                 </div>
             );
+        }
         //=LINK===========================================================================
         case 'link':
             return (

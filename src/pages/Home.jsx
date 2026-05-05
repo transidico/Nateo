@@ -1,8 +1,9 @@
-// Importazione per login e database
+// Importazione per login e database e seo
 import { useAuth } from '../context/auth';
 import { auth, db } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
+import { Helmet } from 'react-helmet-async';
 // Importazione dei componenti
 import { useState, useEffect } from 'react';
 import HomeImage from '../components/HomeImage'
@@ -59,11 +60,22 @@ function Home() {
 
     return (
         <>
+            {/* SEO serve a migliorare il posizionamento nei motori di ricerca */}
+            <Helmet>
+                <title>Nateo Travel | Scopri le destinazioni</title>
+                <meta name="description" content="Scopri le destinazioni più belle del mondo con Nateo Travel. Viaggi, avventure e racconti di viaggio." />
+                <meta property="og:title" content="Nateo Travel" />
+                <meta property="og:description" content="Scopri le destinazioni più belle del mondo con Nateo Travel." />
+                <meta property="og:type" content="website" />
+                <link rel="canonical" href={window.location.href} />
+            </Helmet>
+            {/* Immagine principale della pagina home */}
             <HomeImage
                 titolo="Nateo Travel"
                 sottotitolo="Nati per viaggiare"
                 immagine="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1770&auto=format&fit=crop"
             />
+            {/* Titolo della pagina */}
             <Titolo testo="Scopri le destinazioni più amate" />
 
             {/* Bottoni admin: aggiungi, modifica, logout */}
@@ -77,7 +89,7 @@ function Home() {
 
             {/* Modal per aggiungere una nuova card */}
             {showModal && <AddCardModal onClose={() => setShowModal(false)} onAdd={addCard} />}
-
+            {/* Carousel delle card */}
             <Carousel cards={cards} deleteCard={deleteCard} />
         </>
     )

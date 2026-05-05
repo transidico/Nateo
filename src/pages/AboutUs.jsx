@@ -2,11 +2,23 @@ import AvatarBox from '../components/AvatarBox'
 import fotoAnna from '../assets/Anna.jpeg';
 import fotoMatteo from '../assets/Matteo.jpeg';
 import Titolo from '../components/Text'
+import { Helmet } from 'react-helmet-async';
 
 function AboutUs() {
     return (
         <div className="container mx-auto flex flex-col items-center gap-1 px-4">
+            {/* SEO serve a migliorare il posizionamento nei motori di ricerca */}
+            <Helmet>
+                <title>Chi siamo | Nateo Travel</title>
+                <meta name="description" content="Scopri chi c'è dietro Nateo Travel. Anna Giulia e Matteo, due appassionati di viaggi che condividono le loro avventure in giro per il mondo." />
+                <meta property="og:title" content="Chi siamo | Nateo Travel" />
+                <meta property="og:description" content="Scopri chi c'è dietro Nateo Travel. Anna Giulia e Matteo, due appassionati di viaggi." />
+                <meta property="og:type" content="website" />
+                <link rel="canonical" href={window.location.href} />
+            </Helmet>
+            {/* Titolo della pagina */}
             <Titolo testo="Chi siamo" />
+            {/* Foto e descrizione dei fondatori */}
             <AvatarBox
                 titolo="Anna Giulia Transidico"
                 immagine={fotoAnna}

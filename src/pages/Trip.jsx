@@ -5,6 +5,7 @@ import { collection, setDoc, doc, onSnapshot, orderBy, query } from 'firebase/fi
 import { db } from '../firebase';
 import { AddButton } from '../components/Button';
 import { ModalTrip } from '../components/Modal';
+import { Helmet } from 'react-helmet-async';
 
 function Trip() {
     const { isAdmin } = useAuth();
@@ -43,8 +44,24 @@ function Trip() {
         await setDoc(docRef, { ...blocco, ordine: articolo.length });
     };
 
+    // SEO
+    const titoloPagina = articolo.find(b => b.tipo === 'titolo1')?.testo || 'Viaggio';
+    const descrizionePagina = articolo.find(b => b.tipo === 'paragrafo')?.testo?.slice(0, 155) || '';
+    const immaginePagina = articolo.find(b => b.tipo === 'immagine')?.url || '';
+
     return (
         <>
+            {/* SEO serve a migliorare il posizionamento nei motori di ricerca */}
+            <Helmet>
+                <title>{titoloPagina} | Nateo Travel</title>
+                <meta name="description" content={descrizionePagina} />
+                <meta property="og:title" content={`${titoloPagina} | Nateo Travel`} />
+                <meta property="og:description" content={descrizionePagina} />
+                <meta property="og:image" content={immaginePagina} />
+                <meta property="og:type" content="article" />
+                <link rel="canonical" href={window.location.href} />
+            </Helmet>
+            {/* Pagina del viaggio */}
             {isAdmin && (
                 <div className="flex justify-end items-center gap-2 px-10 mt-4">
                     <AddButton onClick={() => setShowModal(true)} size="w-10 h-10" />

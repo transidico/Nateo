@@ -1,6 +1,7 @@
 import { useAuth } from '../context/auth';
 import { db } from '../firebase';
 import { collection, getDocs, setDoc, deleteDoc, doc } from 'firebase/firestore';
+import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
 import Titolo from '../components/Text';
 import { CardGlobe } from '../components/Card';
@@ -52,16 +53,26 @@ function Destinations() {
 
     return (
         <>
+            {/* SEO serve a migliorare il posizionamento nei motori di ricerca */}
+            <Helmet>
+                <title>Nateo Travel | Destinazioni</title>
+                <meta name="description" content="Esplora tutte le destinazioni di viaggio di Nateo Travel. Scopri Europa, Asia, America e molto altro." />
+                <meta property="og:title" content="Nateo Travel | Destinazioni" />
+                <meta property="og:description" content="Esplora tutte le destinazioni di viaggio di Nateo Travel" />
+                <meta property="og:type" content="website" />
+                <link rel="canonical" href={window.location.href} />
+            </Helmet>
+            {/* Titolo della pagina */}
             <Titolo testo="In quale parte del globo vorresti viaggiare?" align="text-left" />
-
+            {/* Bottoni admin: aggiungi */}
             {isAdmin && (
                 <div className="flex justify-end items-center gap-2 px-10 mt-4">
                     <AddButton onClick={() => setShowModal(true)} size="w-10 h-10" />
                 </div>
             )}
-
+            {/* Modal per aggiungere una nuova destinazione */}
             {showModal && <AddGlobeModal onClose={() => setShowModal(false)} onAdd={addDestination} />}
-
+            {/* Lista delle destinazioni */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-10 mt-14 mb-20">
                 {destinations.map((d) => (
                     <CardGlobe key={d.id} id={d.id} immagine={d.immagine} titolo={d.titolo} deleteCard={() => deleteDestination(d.id)} />

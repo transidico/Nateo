@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { IoPencil, IoLogOut, IoTrash, IoAdd } from 'react-icons/io5';
+import { useState } from 'react';
+import { IoPencil, IoLogOut, IoTrash, IoAdd, IoSaveOutline } from 'react-icons/io5';
 
 // Componente bottone rotondo con colore predefinito ma è impostabile il colore, il colore hover, il colore del bordo, il colore della sfumatura
 export default function RoundButton({ testo, to, onClick, color = "bg-mytheme-secondary/70", hoverColor = "hover:bg-mytheme-primary", borderColor = "border-mytheme-primary/20", glowColor = "hover:shadow-[0_0_15px_5px_rgba(168,85,247,0.5)]", colorText = "text-mytheme-light" }) {
@@ -19,9 +20,20 @@ export default function RoundButton({ testo, to, onClick, color = "bg-mytheme-se
 
 // Bottone circolare con icona edit
 export function EditButton({ onClick, size = "w-10 h-10" }) {
+    const [isActive, setIsActive] = useState(false);
+
+    const handleClick = () => {
+        setIsActive(!isActive);
+        onClick();
+    };
+
     return (
-        <button onClick={onClick} className={`${size} rounded-full bg-mytheme-secondary/70 border-2 border-mytheme-primary/20 flex items-center justify-center text-mytheme-light hover:bg-mytheme-primary hover:shadow-[0_0_15px_5px_rgba(59,130,246,0.5)] transition-all duration-500`}>
-            <IoPencil className="text-sm" />
+        <button onClick={handleClick} className={`${size} rounded-full border-2 flex items-center justify-center transition-all duration-500
+            ${isActive
+                ? 'bg-mytheme-primary border-mytheme-primary text-mytheme-light hover:bg-mytheme-secondary hover:shadow-[0_0_15px_5px_rgba(59,130,246,0.5)]'
+                : 'bg-mytheme-secondary/70 border-mytheme-primary/20 text-mytheme-light hover:bg-mytheme-primary hover:shadow-[0_0_15px_5px_rgba(59,130,246,0.5)]'
+            }`}>
+            {isActive ? <IoSaveOutline className="text-sm" /> : <IoPencil className="text-sm" />}
         </button>
     )
 }
@@ -38,7 +50,7 @@ export function LogoutButton({ onClick, size = "w-10 h-10" }) {
 // Bottone circolare con icona delete
 export function DeleteButton({ onClick, size = "w-10 h-10" }) {
     return (
-        <button onClick={onClick} className={`${size} rounded-full bg-mytheme-light/45 border-2 border-mytheme-light/30 flex items-center justify-center text-mytheme-light hover:bg-mytheme-light/70 hover:shadow-[0_0_15px_5px_rgba(255,255,255,0.5)] transition-all duration-500`}>
+        <button onClick={onClick} className={`${size} rounded-full bg-mytheme-light/45 border-2 border-mytheme-primary flex items-center justify-center text-mytheme-primary hover:bg-mytheme-light/70 hover:shadow-[0_0_15px_5px_rgba(255,255,255,0.5)] transition-all duration-500`}>
             <IoTrash className="text-sm" />
         </button>
     )

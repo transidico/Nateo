@@ -110,10 +110,10 @@ const CAMPI = {
 
 
 // ─── ModalTrip ────────────────────────────────────────────────────────────────
-export function ModalTrip({ onClose, onAdd }) {
-    const [step, setStep] = useState(1);
-    const [selezionato, setSelezionato] = useState(null);
-    const [form, setForm] = useState({});
+export function ModalTrip({ onClose, onAdd, bloccoIniziale = null }) {
+    const [step, setStep] = useState(bloccoIniziale ? 2 : 1);
+    const [selezionato, setSelezionato] = useState(bloccoIniziale?.tipo || null);
+    const [form, setForm] = useState(bloccoIniziale ? { ...bloccoIniziale } : {});
     const [tabImmagine, setTabImmagine] = useState('url');
     const [fileSelezionato, setFileSelezionato] = useState(null);
     const [uploading, setUploading] = useState(false);
@@ -183,7 +183,9 @@ export function ModalTrip({ onClose, onAdd }) {
                 <h2 className="text-xl font-bold text-mytheme-primary">
                     {step === 1
                         ? 'Aggiungi un blocco'
-                        : `Configura: ${BLOCCHI.find(b => b.tipo === selezionato)?.label}`}
+                        : bloccoIniziale
+                            ? `Modifica: ${BLOCCHI.find(b => b.tipo === selezionato)?.label}`
+                            : `Configura: ${BLOCCHI.find(b => b.tipo === selezionato)?.label}`}
                 </h2>
 
                 {/* Step 1 */}

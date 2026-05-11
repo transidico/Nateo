@@ -32,6 +32,44 @@
     --color-mytheme-text: var(--nateo-text);
     --color-mytheme-light: var(--nateo-light);
     --color-mytheme-dark: var(--nateo-dark);
+
+    /* Animazione wiggle per quando si edita qualcosa */
+    --animate-wiggle: wiggle 0.9s ease-in-out;
+
+    /* Definizione dell'animazione wiggle */
+    @keyframes wiggle {
+        0% {
+            transform: translateX(0px);
+        }
+
+        15% {
+            transform: translateX(-2px);
+        }
+
+        30% {
+            transform: translateX(2px);
+        }
+
+        45% {
+            transform: translateX(-2px);
+        }
+
+        60% {
+            transform: translateX(2px);
+        }
+
+        75% {
+            transform: translateX(-1px);
+        }
+
+        90% {
+            transform: translateX(1px);
+        }
+
+        100% {
+            transform: translateX(0px);
+        }
+    }
 }
 
 @layer base {

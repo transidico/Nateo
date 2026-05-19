@@ -1,22 +1,39 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/auth';
 import { useParams } from 'react-router-dom';
 import { collection, setDoc, doc, deleteDoc, onSnapshot, orderBy, query } from 'firebase/firestore';    //Firestore
-import { db } from '../firebase';                                           //Firestore            
+import { db } from '../firebase';                                           //Firestore
 import { AddButton, EditButton, DeleteButton } from '../components/Button'; //Bottoni
 import { ModalTrip } from '../components/Modal';                            //Modal per aggiunta/modifica blocchi articolo
 import { Helmet } from 'react-helmet-async';                                //Per Seo
 import Album from '../components/Album';                                    //componente Album per blocco album (carosello desktop, stories mobile)
 import PageLayout from '../components/PageLayout';                          //Layout comune per padding responsive
+import {
+    DndContext,
+    closestCenter,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';                                                     //Drag and drop context
+import {
+    SortableContext,
+    verticalListSortingStrategy,
+    useSortable,
+    arrayMove,
+} from '@dnd-kit/sortable';                                                 //Drag and drop sortable
+import { CSS } from '@dnd-kit/utilities';                                   //Utility per trasformazioni CSS drag and drop
 
 
 function Trip() {
     const { isAdmin } = useAuth();
     const { id, continente } = useParams();
     const [showModal, setShowModal] = useState(false);              // controlla la visibilità del modal di aggiunta
-    const [editMode, setEditMode] = useState(false);                // attiva/disattiva modalità di editing 
+    const [editMode, setEditMode] = useState(false);                // attiva/disattiva modalità di editing
     const [bloccoInEditing, setBloccoInEditing] = useState(null);   // contiene il blocco attualmente in fase di modifica, null se nessuno
     const [articolo, setArticolo] = useState([]);                   // lista dei blocchi dell'articolo
+
+    // Sensori per il drag and drop — PointerSensor funziona sia con mouse che touch
+    const sensors = useSensors(useSensor(PointerSensor));
 
     // Carica in tempo reale i blocchi da Firestore ordinati per campo "ordine"
     useEffect(() => {
@@ -41,7 +58,7 @@ function Trip() {
         while (numeriUsati.includes(numero)) numero++;
         const docId = `${blocco.tipo}_${numero}`;
         const docRef = doc(db, "destinations", continente, "trip", id, "articolo", docId);
-        await setDoc(docRef, { ...blocco, ordine: articolo.length });
+        await setDoc(docRef, { ...blocco, ordine: Date.now() }); // Date.now() garantisce ordine univoco crescente
     };
 
     // Aggiorna un blocco esistente su Firestore con i nuovi dati (merge: true preserva i campi non modificati)
@@ -59,7 +76,26 @@ function Trip() {
         await deleteDoc(docRef);
     };
 
-    // SEO
+    // Gestisce il drag and drop — aggiorna l'ordine dei blocchi su Firestore
+    const handleDragEnd = async (event) => {
+        const { active, over } = event;
+        if (!over || active.id === over.id) return;
+
+        // Trova gli indici dei blocchi coinvolti nello spostamento
+        const oldIndex = articolo.findIndex(b => b.id === active.id);
+        const newIndex = articolo.findIndex(b => b.id === over.id);
+
+        // Riordina l'array localmente
+        const nuovoOrdine = arrayMove(articolo, oldIndex, newIndex);
+
+        // Salva il nuovo ordine su Firestore per tutti i blocchi
+        await Promise.all(nuovoOrdine.map((blocco, index) => {
+            const docRef = doc(db, "destinations", continente, "trip", id, "articolo", blocco.id);
+            return setDoc(docRef, { ordine: index * 1000 }, { merge: true });
+        }));
+    };
+
+    // SEO — estrae titolo, descrizione e immagine dal contenuto dell'articolo
     const titoloPagina = articolo.find(b => b.tipo === 'titolo1')?.testo || 'Viaggio';
     const descrizionePagina = articolo.find(b => b.tipo === 'paragrafo')?.testo?.slice(0, 155) || '';
     const immaginePagina = articolo.find(b => b.tipo === 'immagine')?.url || '';
@@ -77,7 +113,7 @@ function Trip() {
                 <link rel="canonical" href={window.location.href} />
             </Helmet>
 
-            {/* Se l'utente è admin mostra i bottoni di edit e add in alto a destra */}
+            {/* Barra admin: bottoni edit e add — visibili solo all'admin */}
             {isAdmin && (
                 <div className="flex justify-end items-center gap-2 px-4 sm:px-10 mt-4">
                     {/* EditButton toglla la modalità modifica — cambia icona da matita a salva */}
@@ -105,7 +141,28 @@ function Trip() {
             <PageLayout className="flex flex-col gap-4 sm:gap-6">
                 {articolo.length === 0 ? (
                     <p className="text-mytheme-text/50">Nessun blocco aggiunto. Clicca + per iniziare.</p>
+                ) : editMode ? (
+                    // In modalità edit: abilita drag and drop con DndContext
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}>
+                        <SortableContext
+                            items={articolo.map(b => b.id)}
+                            strategy={verticalListSortingStrategy}>
+                            {articolo.map((blocco) => (
+                                <SortableBlocco
+                                    key={blocco.id}
+                                    blocco={blocco}
+                                    editMode={editMode}
+                                    onEdit={() => setBloccoInEditing(blocco)}
+                                    onDelete={() => handleDelete(blocco.id)}
+                                />
+                            ))}
+                        </SortableContext>
+                    </DndContext>
                 ) : (
+                    // In modalità normale: renderizza i blocchi senza drag and drop
                     articolo.map((blocco, index) => (
                         <BloccoRenderer
                             key={index}
@@ -118,6 +175,30 @@ function Trip() {
                 )}
             </PageLayout>
         </>
+    );
+}
+
+// Wrapper sortable per il drag and drop — avvolge BloccoRenderer con la logica di trascinamento
+function SortableBlocco({ blocco, editMode, onEdit, onDelete }) {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: blocco.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1, // rende semitrasparente il blocco durante il trascinamento
+        cursor: 'grab',
+    };
+
+    return (
+        // setNodeRef e attributes/listeners collegano il div al sistema drag and drop
+        <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+            <BloccoRenderer
+                blocco={blocco}
+                editMode={editMode}
+                onEdit={onEdit}
+                onDelete={onDelete}
+            />
+        </div>
     );
 }
 

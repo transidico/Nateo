@@ -1,5 +1,6 @@
 import { FaInstagram } from "react-icons/fa";
 import { SiTiktok } from "react-icons/si";
+import { Link } from 'react-router-dom';
 
 export function Footer() {
     return (
@@ -7,16 +8,16 @@ export function Footer() {
 
             {/* Navigazione Link */}
             <nav className="flex flex-wrap justify-center gap-6 md:gap-10">
-                <a className="hover:text-mytheme-secondary transition-colors cursor-pointer uppercase text-xs tracking-widest font-semibold">About us</a>
-                <a className="hover:text-mytheme-secondary transition-colors cursor-pointer uppercase text-xs tracking-widest font-semibold">Contact</a>
-                <a className="hover:text-mytheme-secondary transition-colors cursor-pointer uppercase text-xs tracking-widest font-semibold">Tips</a>
+                <Link to="/about" className="hover:text-mytheme-secondary transition-colors cursor-pointer uppercase text-xs tracking-widest font-semibold">About us</Link>
+                <Link to="/destinations" className="hover:text-mytheme-secondary transition-colors cursor-pointer uppercase text-xs tracking-widest font-semibold">Destinations</Link>
+                <Link to="/tips" className="hover:text-mytheme-secondary transition-colors cursor-pointer uppercase text-xs tracking-widest font-semibold">Tips</Link>
             </nav>
 
             {/* Social Icons*/}
             <nav>
                 <div className="flex gap-8">
-                    <a href="#" className="text-2xl hover:text-pink-500 transition-colors"><FaInstagram /></a>
-                    <a href="#" className="text-2xl hover:text-cyan-400 transition-colors"><SiTiktok /></a>
+                    <a href="https://www.instagram.com/transidico" target="_blank" rel="noopener noreferrer" className="text-2xl hover:text-pink-500 transition-colors"><FaInstagram /></a>
+                    <a href="https://www.tiktok.com/@nateotravel" target="_blank" rel="noopener noreferrer" className="text-2xl hover:text-cyan-400 transition-colors"><SiTiktok /></a>
                 </div>
             </nav>
 

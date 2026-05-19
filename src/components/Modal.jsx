@@ -178,7 +178,7 @@ export function ModalTrip({ onClose, onAdd, bloccoIniziale = null }) {
                     body: formData,
                 });
                 const data = await res.json();
-                urlFinale = data.secure_url; // URL pubblico dell'immagine caricata
+                urlFinale = data.secure_url.replace('/upload/', '/upload/w_1920,h_1080,c_limit,q_auto,f_auto/'); // URL pubblico dell'immagine caricata
                 setUploading(false);
             }
 
@@ -458,7 +458,7 @@ function AlbumEditor({ form, setForm, setUploading, setUploadProgress }) {
 //=========================================================================================================================
 //=========================================================================================================================
 // ─── ModalTips ────────────────────────────────────────────────────────────────
-// Modal per aggiungere un nuovo tip con titolo, categoria, testo, link opzionale e colore
+// Modal per aggiungere o modificare un tip con titolo, categoria, testo, link opzionale e colore
 
 // Palette di colori disponibili per i postit — l'admin sceglie cliccando sui quadratini colorati
 const COLORI_TIPS = [
@@ -470,9 +470,16 @@ const COLORI_TIPS = [
     { colore: '#E1BEE7', coloreCategoria: '#AFA9EC', coloreTesto: '#26215C', coloreCategoriaTesto: '#534AB7', nome: 'Viola' },
 ];
 
-// onClose: chiude il modal | onAdd: salva il tip su Firestore
-export function ModalTips({ onClose, onAdd }) {
-    const [form, setForm] = useState({ titolo: '', testo: '', categoria: '', link: '', coloreIndex: 0 });
+// onClose: chiude il modal | onAdd: salva il tip su Firestore | tipIniziale: dati precompilati per la modifica
+export function ModalTips({ onClose, onAdd, tipIniziale = null }) {
+    // Se tipIniziale è fornito si parte con i campi precompilati con i dati esistenti
+    const [form, setForm] = useState(tipIniziale ? {
+        titolo: tipIniziale.titolo || '',
+        testo: tipIniziale.testo || '',
+        categoria: tipIniziale.categoria || '',
+        link: tipIniziale.link || '',
+        coloreIndex: COLORI_TIPS.findIndex(c => c.colore === tipIniziale.colore) ?? 0,
+    } : { titolo: '', testo: '', categoria: '', link: '', coloreIndex: 0 });
 
     // Aggiorna il form al cambio di un campo
     const update = (e) => setForm({ ...form, [e.target.id]: e.target.value });
@@ -489,7 +496,11 @@ export function ModalTips({ onClose, onAdd }) {
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-6 sm:px-4">
             <div className="bg-mytheme-bg rounded-2xl p-5 sm:p-8 w-full max-w-xs sm:max-w-sm flex flex-col gap-4 shadow-xl max-h-[90vh] overflow-y-auto">
-                <h2 className="text-xl font-bold text-mytheme-primary">Aggiungi un tip</h2>
+
+                {/* Titolo dinamico: cambia in base alla modalità aggiunta/modifica */}
+                <h2 className="text-xl font-bold text-mytheme-primary">
+                    {tipIniziale ? 'Modifica tip' : 'Aggiungi un tip'}
+                </h2>
 
                 {/* Campo titolo — obbligatorio */}
                 <input id="titolo" type="text" placeholder="Titolo" value={form.titolo} onChange={update}
@@ -517,7 +528,7 @@ export function ModalTips({ onClose, onAdd }) {
                     ))}
                 </div>
 
-                {/* Bottoni annulla e aggiungi */}
+                {/* Bottoni annulla e aggiungi/salva */}
                 <div className="flex gap-2 justify-end">
                     <button onClick={onClose}
                         className="px-4 py-3 rounded-full border border-mytheme-primary text-mytheme-text hover:bg-mytheme-primary hover:text-white transition-all duration-300 text-sm">
@@ -525,7 +536,7 @@ export function ModalTips({ onClose, onAdd }) {
                     </button>
                     <button onClick={handleAggiungi}
                         className="px-4 py-3 rounded-full bg-mytheme-primary text-white hover:bg-mytheme-secondary transition-all duration-300 text-sm">
-                        Aggiungi
+                        {tipIniziale ? 'Salva' : 'Aggiungi'}
                     </button>
                 </div>
             </div>

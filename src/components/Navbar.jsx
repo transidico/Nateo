@@ -1,14 +1,31 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { IoMoonSharp, IoSunny, IoMenuSharp, IoCloseSharp } from "react-icons/io5";
 import { Link } from 'react-router-dom';
 
 /*Componente Navbar*/
 function Navbar() {
-  const [isDark, setIsDark] = useState(false);
+  // Legge la preferenza salvata in localStorage, altrimenti usa quella del sistema
+  const [isDark, setIsDark] = useState(() => {
+    const salvato = localStorage.getItem('tema');
+    if (salvato) return salvato === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Applica il tema salvato al mount — evita il flash di tema sbagliato al reload
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  // Cambia il tema e salva la preferenza in localStorage
   const toggleTheme = () => {
-    setIsDark(!isDark);
+    const nuovoDark = !isDark;
+    setIsDark(nuovoDark);
+    localStorage.setItem('tema', nuovoDark ? 'dark' : 'light');
     document.documentElement.classList.toggle('dark');
   };
 
@@ -23,19 +40,26 @@ function Navbar() {
           <Link to="/tips" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">Tips</Link>
           <Link to="/about" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">About</Link>
           <Link to="/login" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">Login</Link>
-          <button onClick={toggleTheme} className="text-2xl cursor-pointer text-mytheme-text">{isDark ? <IoSunny /> : <IoMoonSharp />}</button>
+          <button onClick={toggleTheme} className="text-2xl cursor-pointer text-mytheme-text">
+            {isDark ? <IoSunny /> : <IoMoonSharp />}
+          </button>
         </div>
 
         {/* Visualizzazione link in modalità mobile */}
         <div className="flex md:hidden items-center space-x-4">
-          <button onClick={toggleTheme} className="text-2xl cursor-pointer text-mytheme-text">{isDark ? <IoSunny /> : <IoMoonSharp />}</button>
-          <button onClick={() => setMenuOpen(!menuOpen)} className="text-2xl cursor-pointer text-mytheme-text">{menuOpen ? <IoCloseSharp /> : <IoMenuSharp />}</button>
+          <button onClick={toggleTheme} className="text-2xl cursor-pointer text-mytheme-text">
+            {isDark ? <IoSunny /> : <IoMoonSharp />}
+          </button>
+          <button onClick={() => setMenuOpen(!menuOpen)} className="text-2xl cursor-pointer text-mytheme-text">
+            {menuOpen ? <IoCloseSharp /> : <IoMenuSharp />}
+          </button>
         </div>
       </div>
+
       {/* Se il menu è aperto mostro la tendina */}
       {menuOpen && (
         <div className="md:hidden absolute w-full px-6 pb-4 flex flex-col space-y-3 bg-mytheme-bg shadow-lg shadow-mytheme-text/20 z-50">
-          <Link to="/Home" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">Home</Link>
+          <Link to="/home" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">Home</Link>
           <Link to="/destinations" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">Destinations</Link>
           <Link to="/tips" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">Tips</Link>
           <Link to="/about" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">About</Link>

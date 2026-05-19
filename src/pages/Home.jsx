@@ -80,7 +80,7 @@ function Home() {
 
             {/* Bottoni admin: aggiungi, modifica, logout */}
             {isAdmin && (
-                <div className="flex justify-end items-center gap-2 px-10 mt-4">
+                <div className="flex justify-end items-center gap-2 px-4 sm:px-10 mt-4">
                     <AddButton onClick={() => setShowModal(true)} size="w-8 h-8" />
                     <EditButton onClick={() => console.log('modifica')} size="w-8 h-8" />
                     <LogoutButton onClick={() => signOut(auth)} size="w-8 h-8" />

@@ -2,6 +2,8 @@ import { useState, useRef } from 'react';
 import { storage } from '../firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
+//=========================================================================================================================
+//=========================================================================================================================
 // ─── AddCardModal ─────────────────────────────────────────────────────────────
 // Modal per aggiungere una nuova card alla home (titolo, immagine, descrizione)
 function AddCardModal({ onClose, onAdd }) {
@@ -38,7 +40,8 @@ function AddCardModal({ onClose, onAdd }) {
 
 export default AddCardModal;
 
-
+//=========================================================================================================================
+//=========================================================================================================================
 // ─── AddGlobeModal ────────────────────────────────────────────────────────────
 // Modal per aggiungere una nuova destinazione (continente/paese) nella pagina Destinations
 export function AddGlobeModal({ onClose, onAdd }) {
@@ -71,7 +74,8 @@ export function AddGlobeModal({ onClose, onAdd }) {
     );
 }
 
-
+//=========================================================================================================================
+//=========================================================================================================================
 // ─── Costanti ModalTrip ───────────────────────────────────────────────────────
 // Lista dei tipi di blocco disponibili per costruire l'articolo del viaggio
 const BLOCCHI = [
@@ -447,6 +451,84 @@ function AlbumEditor({ form, setForm, setUploading, setUploadProgress }) {
                     + Aggiungi foto
                 </button>
             )}
+        </div>
+    );
+}
+
+//=========================================================================================================================
+//=========================================================================================================================
+// ─── ModalTips ────────────────────────────────────────────────────────────────
+// Modal per aggiungere un nuovo tip con titolo, categoria, testo, link opzionale e colore
+
+// Palette di colori disponibili per i postit — l'admin sceglie cliccando sui quadratini colorati
+const COLORI_TIPS = [
+    { colore: '#FFF9C4', coloreCategoria: '#FAC775', coloreTesto: '#412402', coloreCategoriaTesto: '#854F0B', nome: 'Giallo' },
+    { colore: '#C8E6C9', coloreCategoria: '#97C459', coloreTesto: '#173404', coloreCategoriaTesto: '#3B6D11', nome: 'Verde' },
+    { colore: '#BBDEFB', coloreCategoria: '#85B7EB', coloreTesto: '#042C53', coloreCategoriaTesto: '#185FA5', nome: 'Blu' },
+    { colore: '#F8BBD9', coloreCategoria: '#ED93B1', coloreTesto: '#4B1528', coloreCategoriaTesto: '#993556', nome: 'Rosa' },
+    { colore: '#FFE0B2', coloreCategoria: '#FFAB40', coloreTesto: '#4A1B0C', coloreCategoriaTesto: '#993C1D', nome: 'Arancione' },
+    { colore: '#E1BEE7', coloreCategoria: '#AFA9EC', coloreTesto: '#26215C', coloreCategoriaTesto: '#534AB7', nome: 'Viola' },
+];
+
+// onClose: chiude il modal | onAdd: salva il tip su Firestore
+export function ModalTips({ onClose, onAdd }) {
+    const [form, setForm] = useState({ titolo: '', testo: '', categoria: '', link: '', coloreIndex: 0 });
+
+    // Aggiorna il form al cambio di un campo
+    const update = (e) => setForm({ ...form, [e.target.id]: e.target.value });
+
+    // Valida i campi obbligatori, aggiunge i colori e chiama onAdd
+    const handleAggiungi = () => {
+        const { titolo, testo, categoria } = form;
+        if (!titolo || !testo || !categoria) return; // blocca se campi obbligatori mancanti
+        const colori = COLORI_TIPS[form.coloreIndex]; // prende i colori del postit selezionato
+        onAdd({ titolo, testo, categoria, link: form.link || '', ...colori });
+        onClose();
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-6 sm:px-4">
+            <div className="bg-mytheme-bg rounded-2xl p-5 sm:p-8 w-full max-w-xs sm:max-w-sm flex flex-col gap-4 shadow-xl max-h-[90vh] overflow-y-auto">
+                <h2 className="text-xl font-bold text-mytheme-primary">Aggiungi un tip</h2>
+
+                {/* Campo titolo — obbligatorio */}
+                <input id="titolo" type="text" placeholder="Titolo" value={form.titolo} onChange={update}
+                    className="px-4 py-3 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text" />
+
+                {/* Campo categoria — obbligatorio, usato anche come base per l'ID Firestore */}
+                <input id="categoria" type="text" placeholder="Categoria" value={form.categoria} onChange={update}
+                    className="px-4 py-3 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text" />
+
+                {/* Campo testo del consiglio — obbligatorio */}
+                <textarea id="testo" placeholder="Testo del consiglio" value={form.testo} onChange={update}
+                    className="px-4 py-3 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text h-24" />
+
+                {/* Campo link — opzionale, appare come "🔗 Apri link" nel postit */}
+                <input id="link" type="text" placeholder="Link (opzionale)" value={form.link} onChange={update}
+                    className="px-4 py-3 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text" />
+
+                {/* Scelta colore postit — quadratini cliccabili, quello selezionato ha bordo primario */}
+                <div className="flex gap-2 flex-wrap">
+                    {COLORI_TIPS.map((c, i) => (
+                        <button key={i} onClick={() => setForm({ ...form, coloreIndex: i })}
+                            style={{ background: c.colore }}
+                            className={`w-8 h-8 rounded border-2 transition-all ${form.coloreIndex === i ? 'border-mytheme-primary scale-110' : 'border-transparent'}`}
+                            title={c.nome} />
+                    ))}
+                </div>
+
+                {/* Bottoni annulla e aggiungi */}
+                <div className="flex gap-2 justify-end">
+                    <button onClick={onClose}
+                        className="px-4 py-3 rounded-full border border-mytheme-primary text-mytheme-text hover:bg-mytheme-primary hover:text-white transition-all duration-300 text-sm">
+                        Annulla
+                    </button>
+                    <button onClick={handleAggiungi}
+                        className="px-4 py-3 rounded-full bg-mytheme-primary text-white hover:bg-mytheme-secondary transition-all duration-300 text-sm">
+                        Aggiungi
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }

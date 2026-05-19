@@ -66,14 +66,14 @@ function Destinations() {
             <Titolo testo="In quale parte del globo vorresti viaggiare?" align="text-left" />
             {/* Bottoni admin: aggiungi */}
             {isAdmin && (
-                <div className="flex justify-end items-center gap-2 px-10 mt-4">
+                <div className="flex justify-end items-center gap-2 px-4 sm:px-10 mt-4">
                     <AddButton onClick={() => setShowModal(true)} size="w-10 h-10" />
                 </div>
             )}
             {/* Modal per aggiungere una nuova destinazione */}
             {showModal && <AddGlobeModal onClose={() => setShowModal(false)} onAdd={addDestination} />}
             {/* Lista delle destinazioni */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-10 mt-14 mb-20">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 sm:px-10 mt-6 sm:mt-14 mb-12 sm:mb-20">
                 {destinations.map((d) => (
                     <CardGlobe key={d.id} id={d.id} immagine={d.immagine} titolo={d.titolo} deleteCard={() => deleteDestination(d.id)} />
                 ))}

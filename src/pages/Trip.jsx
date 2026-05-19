@@ -7,6 +7,7 @@ import { AddButton, EditButton, DeleteButton } from '../components/Button'; //Bo
 import { ModalTrip } from '../components/Modal';                            //Modal per aggiunta/modifica blocchi articolo
 import { Helmet } from 'react-helmet-async';                                //Per Seo
 import Album from '../components/Album';                                    //componente Album per blocco album (carosello desktop, stories mobile)
+import PageLayout from '../components/PageLayout';                          //Layout comune per padding responsive
 
 
 function Trip() {
@@ -54,7 +55,6 @@ function Trip() {
     // Elimina un blocco da Firestore usando il suo ID
     const handleDelete = async (docId) => {
         if (!continente || !id) return;
-        const { deleteDoc } = await import('firebase/firestore');
         const docRef = doc(db, "destinations", continente, "trip", id, "articolo", docId);
         await deleteDoc(docRef);
     };
@@ -79,12 +79,9 @@ function Trip() {
 
             {/* Se l'utente è admin mostra i bottoni di edit e add in alto a destra */}
             {isAdmin && (
-                <div className="flex justify-end items-center gap-2 px-10 mt-4">
+                <div className="flex justify-end items-center gap-2 px-4 sm:px-10 mt-4">
                     {/* EditButton toglla la modalità modifica — cambia icona da matita a salva */}
-                    <EditButton
-                        onClick={() => setEditMode(!editMode)}
-                        size="w-10 h-10"
-                    />
+                    <EditButton onClick={() => setEditMode(!editMode)} size="w-10 h-10" />
                     {/* AddButton apre il modal per aggiungere un nuovo blocco */}
                     <AddButton onClick={() => setShowModal(true)} size="w-10 h-10" />
                 </div>
@@ -105,7 +102,7 @@ function Trip() {
             )}
 
             {/* Lista dei blocchi dell'articolo */}
-            <div className="px-10 py-10 flex flex-col gap-6">
+            <PageLayout className="flex flex-col gap-4 sm:gap-6">
                 {articolo.length === 0 ? (
                     <p className="text-mytheme-text/50">Nessun blocco aggiunto. Clicca + per iniziare.</p>
                 ) : (
@@ -119,7 +116,7 @@ function Trip() {
                         />
                     ))
                 )}
-            </div>
+            </PageLayout>
         </>
     );
 }

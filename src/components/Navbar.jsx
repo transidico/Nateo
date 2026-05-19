@@ -18,9 +18,9 @@ function Navbar() {
         <h1 className="text-xl font-bold text-mytheme-primary">🌍 Nateo Travel</h1>
         {/* Visualizzazione link in modalità desktop */}
         <div className="hidden md:flex items-center space-x-6">
-          <Link to="/Home" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">Home</Link>
+          <Link to="/home" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">Home</Link>
           <Link to="/destinations" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">Destinations</Link>
-          <a href="#" className="text-mytheme-text hover:text-mytheme-secondary">Tips</a>
+          <Link to="/tips" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">Tips</Link>
           <Link to="/about" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">About</Link>
           <Link to="/login" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">Login</Link>
           <button onClick={toggleTheme} className="text-2xl cursor-pointer text-mytheme-text">{isDark ? <IoSunny /> : <IoMoonSharp />}</button>
@@ -37,7 +37,7 @@ function Navbar() {
         <div className="md:hidden absolute w-full px-6 pb-4 flex flex-col space-y-3 bg-mytheme-bg shadow-lg shadow-mytheme-text/20 z-50">
           <Link to="/Home" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">Home</Link>
           <Link to="/destinations" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">Destinations</Link>
-          <a href="#" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary">Tips</a>
+          <Link to="/tips" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">Tips</Link>
           <Link to="/about" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">About</Link>
           <Link to="/login" onClick={() => setMenuOpen(false)} className="text-mytheme-text hover:text-mytheme-secondary font-medium">Login</Link>
         </div>

@@ -19,7 +19,7 @@ function Carousel({ cards, deleteCard }) {
 
   //Carosello
   return (
-    <div className="relative w-full px-10 py-10">
+    <div className="relative w-full px-4 sm:px-10 py-10">
       {/* Pulsanti di scorrimento */}
       <ArrowBtn direction="left" />
       <ArrowBtn direction="right" />

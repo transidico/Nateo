@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Destinations from './pages/Destinations';
 import AboutUs from './pages/AboutUs';
+import Tips from './pages/Tips';
 import Login from './pages/Login';
 import { Authentication } from './context/auth';
 import DestinationSection from './pages/DestinationSection';
@@ -21,6 +22,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/home" element={<Home />} />
               <Route path="/destinations" element={<Destinations />} />
+              <Route path="/tips" element={<Tips />} />
               <Route path="/about" element={<AboutUs />} />
               <Route path="/destinations/:id" element={<DestinationSection />} />
               <Route path="/destinations/:continente/trip/:id" element={<Trip />} />

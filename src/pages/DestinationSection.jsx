@@ -7,6 +7,7 @@ import { useAuth } from '../context/auth';
 import { AddButton } from '../components/Button';
 import AddCardModal from '../components/Modal';
 import Card from '../components/Card';
+import PageLayout from '../components/PageLayout';
 
 function DestinationSection() {
     const { id: continente } = useParams(); // Prende il continente dall'URL (es. "asia")
@@ -42,13 +43,13 @@ function DestinationSection() {
         <>
             {/* Bottone per aggiungere una nuova destinazione, visibile solo all'admin */}
             {isAdmin && (
-                <div className="flex justify-end items-center gap-2 px-10 mt-4">
+                <div className="flex justify-end items-center gap-2 px-4 sm:px-10 mt-4">
                     <AddButton onClick={() => setShowModal(true)} size="w-10 h-10" />
                 </div>
             )}
 
             {/* Griglia delle card: mostra messaggio se vuota, altrimenti le card dei viaggi */}
-            <div className="px-10 py-10 flex flex-wrap gap-6">
+            <PageLayout className="flex flex-wrap gap-4 sm:gap-6">
                 {destinations.length === 0 ? (
                     <p className="text-mytheme-text">Non è stata ancora aggiunta alcuna destinazione in {continente}.</p>
                 ) : (
@@ -56,7 +57,7 @@ function DestinationSection() {
                         <Card key={card.id} id={card.id} immagine={card.immagine} titolo={card.titolo} descrizione={card.descrizione} deleteCard={() => deleteDestination(card.id)} continente={continente} />
                     ))
                 )}
-            </div>
+            </PageLayout>
 
             {/* Modal per aggiungere un nuovo viaggio */}
             {showModal && (

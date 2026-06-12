@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { storage } from '../firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import countries from 'world-countries';
 
 //=========================================================================================================================
 //=========================================================================================================================
@@ -539,6 +540,76 @@ export function ModalTips({ onClose, onAdd, tipIniziale = null }) {
                         {tipIniziale ? 'Salva' : 'Aggiungi'}
                     </button>
                 </div>
+            </div>
+        </div>
+    );
+}
+
+//=========================================================================================================================
+//=========================================================================================================================
+// ─── ModalFlag ────────────────────────────────────────────────────────────────
+// Genera l'emoji della bandiera dal codice ISO a 2 lettere (es. "IT" → 🇮🇹)
+const emojiFromCode = (code) =>
+    code.toUpperCase().split('').map(c =>
+        String.fromCodePoint(c.charCodeAt(0) + 127397)
+    ).join('');
+
+// Lista completa dei paesi con nome in italiano e emoji bandiera, ordinata alfabeticamente
+const PAESI = countries
+    .map(c => ({
+        nome: c.translations?.ita?.common || c.name.common,
+        code: c.cca2.toLowerCase(),
+    }))
+    .sort((a, b) => a.nome.localeCompare(b.nome));
+
+// Modal per aggiungere un paese visitato — mostra lista filtrabile con ricerca
+// onClose: chiude il modal | onAdd: salva il paese su Firestore | paesiGiaAggiunti: evita duplicati
+export function ModalFlag({ onClose, onAdd, paesiGiaAggiunti = [] }) {
+    const [ricerca, setRicerca] = useState('');
+
+    // Filtra i paesi in base alla ricerca e rimuove quelli già aggiunti
+    const paesiFiltrati = PAESI.filter(p =>
+        p.nome.toLowerCase().includes(ricerca.toLowerCase()) &&
+        !paesiGiaAggiunti.includes(p.nome)
+    );
+
+    return (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-6 sm:px-4">
+            <div className="bg-mytheme-bg rounded-2xl p-5 sm:p-8 w-full max-w-xs sm:max-w-sm flex flex-col gap-4 shadow-xl max-h-[90vh]">
+                <h2 className="text-xl font-bold text-mytheme-primary">Aggiungi paese visitato</h2>
+
+                {/* Campo di ricerca paese */}
+                <input
+                    type="text"
+                    placeholder="Cerca paese..."
+                    value={ricerca}
+                    onChange={e => setRicerca(e.target.value)}
+                    className="px-4 py-3 rounded-lg border border-mytheme-primary focus:outline-none bg-mytheme-bg text-mytheme-text"
+                />
+
+                {/* Lista paesi filtrati e scorrevole */}
+                <div className="overflow-y-auto flex flex-col gap-1 max-h-64">
+                    {paesiFiltrati.length === 0 ? (
+                        <p className="text-mytheme-text/50 text-sm text-center py-4">Nessun paese trovato</p>
+                    ) : (
+                        paesiFiltrati.map(paese => (
+                            // Click sul paese lo aggiunge e chiude il modal
+                            <button
+                                key={paese.nome}
+                                onClick={() => { onAdd({ paese: paese.nome, code: paese.code }); onClose(); }}
+                                className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-mytheme-primary/10 transition-all text-left">
+                                <img src={`https://flagcdn.com/w40/${paese.code}.png`} alt={paese.nome} className="w-8 h-5 object-cover rounded-sm" />
+                                <span className="text-mytheme-text text-sm">{paese.nome}</span>
+                            </button>
+                        ))
+                    )}
+                </div>
+
+                {/* Bottone annulla */}
+                <button onClick={onClose}
+                    className="px-4 py-3 rounded-full border border-mytheme-primary text-mytheme-text hover:bg-mytheme-primary hover:text-white transition-all duration-300 text-sm">
+                    Annulla
+                </button>
             </div>
         </div>
     );

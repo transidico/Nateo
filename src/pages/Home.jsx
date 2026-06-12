@@ -2,21 +2,24 @@
 import { useAuth } from '../context/auth';
 import { auth, db } from '../firebase';
 import { signOut } from 'firebase/auth';
-import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { Helmet } from 'react-helmet-async';
 // Importazione dei componenti
 import { useState, useEffect } from 'react';
 import HomeImage from '../components/HomeImage'
 import Carousel from '../components/Carousel'
 import Titolo from '../components/Text'
-import AddCardModal from '../components/Modal';
 import { EditButton, LogoutButton, AddButton } from '../components/Button';
+import AddCardModal, { ModalFlag } from '../components/Modal';
+import Flag from '../components/Flag';
 
 //Pagina home
 function Home() {
     const { isAdmin } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [cards, setCards] = useState([]);
+    const [showFlagModal, setShowFlagModal] = useState(false);          // modal aggiunta paese
+    const [paesi, setPaesi] = useState([]);                             // lista paesi visitati
 
     // Riferimento alla collezione "destinazioni" su Firestore
     const cardsCollectionRef = collection(db, "destinazioni");
@@ -36,6 +39,14 @@ function Home() {
             }
         };
         getCards();
+    }, []);
+
+    // Carica in tempo reale i paesi visitati da Firestore
+    useEffect(() => {
+        const unsub = onSnapshot(collection(db, "flags"), (snap) => {
+            setPaesi(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+        });
+        return () => unsub();
     }, []);
 
     // Salva la nuova card su Firebase e aggiorna lo stato locale
@@ -58,6 +69,24 @@ function Home() {
         }
     };
 
+    // Aggiunge un paese visitato su Firestore
+    const addPaese = async (paese) => {
+        try {
+            await setDoc(doc(db, "flags", paese.paese), paese);
+        } catch (error) {
+            console.error("Errore durante il salvataggio del paese:", error);
+        }
+    };
+
+    // Elimina un paese visitato da Firestore
+    const deletePaese = async (id) => {
+        try {
+            await deleteDoc(doc(db, "flags", id));
+        } catch (error) {
+            console.error("Errore durante l'eliminazione del paese:", error);
+        }
+    };
+
     return (
         <>
             {/* SEO serve a migliorare il posizionamento nei motori di ricerca */}
@@ -75,6 +104,26 @@ function Home() {
                 sottotitolo="Nati per viaggiare"
                 immagine="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1770&auto=format&fit=crop"
             />
+            {/* Titolo della pagina */}
+            <Titolo testo="Questi sono i paesi che abbiamo visitato" />
+
+            {/* Bottone admin per aggiungere una bandiera */}
+            {isAdmin && (
+                <div className="flex justify-end items-center gap-2 px-4 sm:px-10 mt-4">
+                    <AddButton onClick={() => setShowFlagModal(true)} size="w-8 h-8" />
+                </div>
+            )}
+            {/* Griglia delle bandiere */}
+            <Flag paesi={paesi} isAdmin={isAdmin} onDelete={deletePaese} />
+            {/* Modal per aggiungere un paese */}
+            {showFlagModal && (
+                <ModalFlag
+                    onClose={() => setShowFlagModal(false)}
+                    onAdd={addPaese}
+                    paesiGiaAggiunti={paesi.map(p => p.paese)}
+                />
+            )}
+
             {/* Titolo della pagina */}
             <Titolo testo="Scopri le destinazioni più amate" />
 

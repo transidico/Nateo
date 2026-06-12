@@ -39,7 +39,6 @@ function Navbar() {
           <Link to="/destinations" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">Destinations</Link>
           <Link to="/tips" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">Tips</Link>
           <Link to="/about" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">About</Link>
-          <Link to="/login" className="text-mytheme-text hover:text-mytheme-secondary font-medium transition-colors">Login</Link>
           <button onClick={toggleTheme} className="text-2xl cursor-pointer text-mytheme-text">
             {isDark ? <IoSunny /> : <IoMoonSharp />}
           </button>
